@@ -39,8 +39,6 @@ fn main() {
 
     println!("    * Day 2 - Part 2 ==> {:?}", day_2_2_2017(val));
 
-
-    println!("    * Day 3 - Part 1 ==> {:?}", day_3_1_2017());
-
+    println!("    * Day 3 - Part 1 ==> {}", day_3_1_2017(361527));
 
 }
