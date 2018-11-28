@@ -1,22 +1,22 @@
 fn get_level_for_value(number: i32) -> i32 {
-    (((number as f32).sqrt() + 1.0) / 2.0).ceil() as i32
+    (((number as f32).sqrt() + 1.0) / 2.0).ceil() as i32 - 1
 }
 
-fn get_number_position_on_level(level: i32, number: i32) -> i32 {
+fn get_number_position_on_level(number: i32, level: i32) -> i32 {
     (number - (2 * level - 1).pow(2) - 1) %  level
 }
 
+fn get_distance_for_number(num: i32, level:i32) -> i32 {
+    let posicion = get_number_position_on_level(level, num);
+    (posicion - level + 1).abs() + level
+}
+
 fn get_position_for_value(value: i32) {
-    for i in 1..value {
-        let level = get_level_for_value(i);
-        let position_on_level = get_number_position_on_level(level, i);
-        println!("Level for number {}: {}", i, level);
-        //println!("Position for number {}: {}", i, position_on_level);
-    }
+    let level = get_level_for_value(value);
+    println!("La distancia del nro {} es: {}",value, get_distance_for_number(value, level));
 }
 
 pub fn day_3_1_2017() {
-    get_position_for_value(81);
-    println!("valores 12 {:?}",(1..81).collect::<Vec<i32>>().chunks((get_level_for_value(6) as usize - 1) * 2 ).skip(((get_level_for_value(6) as usize - 2 ) * 2)).collect::<Vec<&[i32]>>());
+    get_position_for_value(12);
 }
 
