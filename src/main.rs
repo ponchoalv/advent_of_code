@@ -5,7 +5,7 @@ mod day_3_2017;
 
 use day_1_2017::day_1_2017;
 use day_2_2017::{day_2_2017,day_2_2_2017};
-use day_3_2017::day_3_1_2017;
+use day_3_2017::{day_3_1_2017,get_distance_for_number};
 
 
 fn main() {
@@ -39,6 +39,8 @@ fn main() {
 
     println!("    * Day 2 - Part 2 ==> {:?}", day_2_2_2017(val));
 
-    println!("    * Day 3 - Part 1 ==> {}", day_3_1_2017(361527));
+    println!("    * Day 3 - Part 1 ==> {}", day_3_1_2017(361_527));
+
+    println!("    * Day 3 - Part 1 (with spiral) ==> {}", get_distance_for_number(361_527));
 
 }

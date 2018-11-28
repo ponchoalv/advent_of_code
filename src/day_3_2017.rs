@@ -5,16 +5,16 @@ enum Direction {
     Left,
 }
 
-fn change_direction(direction: &Direction, change: i32) -> Direction {
-    match (direction, change) {
-        (Direction::Up, 1) => Direction::Left,
-        (Direction::Down, 1) => Direction::Right,
-        (Direction::Left, 1) => Direction::Down,
-        (Direction::Right, 1) => Direction::Up,
-        (Direction::Up, _) => Direction::Up,
-        (Direction::Down, _) => Direction::Down,
-        (Direction::Left, _) => Direction::Left,
-        (Direction::Right, _) => Direction::Right,
+fn change_direction(direction: &Direction, change_dir: bool) -> Direction {
+    match (direction, change_dir) {
+        (Direction::Up, true) => Direction::Left,
+        (Direction::Down, true) => Direction::Right,
+        (Direction::Left, true) => Direction::Down,
+        (Direction::Right, true) => Direction::Up,
+        (Direction::Up, false) => Direction::Up,
+        (Direction::Down, false) => Direction::Down,
+        (Direction::Left, false) => Direction::Left,
+        (Direction::Right, false) => Direction::Right,
     }
 }
 
@@ -22,27 +22,12 @@ fn get_level_for_value(number: i32) -> i32 {
     (((number as f32).sqrt() + 1.0) / 2.0).ceil() as i32 - 1
 }
 
-fn get_number_position_on_level(number: i32, level: i32) -> i32 {
-    ((number - (2 * level - 1).pow(2)) % (2 * level))
-}
-
-pub fn day_3_1_2017(num: i32) -> i32 {
-    if num == 1 {
-        0
-    } else {
-        let level = get_level_for_value(num);
-        let posicion = get_number_position_on_level(num, level);
-        ((posicion - level).abs() + level)
-    }
-}
-
-
 fn get_spiral_iter(max: i32) -> impl Iterator<Item=(i32,i32)> {
     let mut direction = Direction::Up;
     let mut last_pair = (0, 0);
     let mut is_first = true;
 
-    (2..(max + 1)).map(move |x| {
+    (2..=max).map(move |x| {
         let level = get_level_for_value(x) * 2;
 
         match direction {
@@ -53,21 +38,22 @@ fn get_spiral_iter(max: i32) -> impl Iterator<Item=(i32,i32)> {
                 } else {
                     last_pair = (last_pair.0, last_pair.1 + 1);
                 }
-                direction = change_direction(&direction, x % level);
-            }
+                direction = change_direction(&direction, x % level == 1);
+            },
             Direction::Down => {
                 last_pair = (last_pair.0, last_pair.1 - 1);
-                direction = change_direction(&direction, x % level);
-            }
+                direction = change_direction(&direction, x % level == 1);
+            },
             Direction::Left => {
                 last_pair = (last_pair.0 - 1, last_pair.1);
-                direction = change_direction(&direction, x % level);
-            }
+                direction = change_direction(&direction, x % level == 1);
+            },
             Direction::Right => {
                 last_pair = (last_pair.0 + 1, last_pair.1);
-                direction = change_direction(&direction, x % level);
-                is_first = x % level == 1;
-            }
+                let has_change = x % level == 1;
+                direction = change_direction(&direction, has_change);
+                is_first = has_change;
+            },
         }
         last_pair
     })
@@ -83,44 +69,21 @@ pub fn get_distance_for_number(number: i32) -> i32{
     }
 }
 
-#[test]
-fn make_spiral() {
-    let mut direction = Direction::Up;
-    let mut last_pair = (0, 0);
-    let mut is_first = true;
-
-    let valores = (2..1025).map(move |x| {
-        let level = get_level_for_value(x) * 2;
-
-        match direction {
-            Direction::Up => {
-                if is_first {
-                    last_pair = (last_pair.0 + 1, last_pair.1);
-                    is_first = false;
-                } else {
-                    last_pair = (last_pair.0, last_pair.1 + 1);
-                }
-                direction = change_direction(&direction, x % level);
-            }
-            Direction::Down => {
-                last_pair = (last_pair.0, last_pair.1 - 1);
-                direction = change_direction(&direction, x % level);
-            }
-            Direction::Left => {
-                last_pair = (last_pair.0 - 1, last_pair.1);
-                direction = change_direction(&direction, x % level);
-            }
-            Direction::Right => {
-                last_pair = (last_pair.0 + 1, last_pair.1);
-                direction = change_direction(&direction, x % level);
-                is_first = x % level == 1;
-            }
-        }
-        last_pair
-    }).collect::<Vec<(i32, i32)>>();
-
-    println!("Valores de pares creados: {:?}", valores);
+fn get_number_position_on_level(number: i32, level: i32) -> i32 {
+    ((number - (2 * level - 1).pow(2)) % (2 * level))
 }
+
+
+pub fn day_3_1_2017(num: i32) -> i32 {
+    if num == 1 {
+        0
+    } else {
+        let level = get_level_for_value(num);
+        let posicion = get_number_position_on_level(num, level);
+        ((posicion - level).abs() + level)
+    }
+}
+
 
 #[test]
 fn test_distance(){
