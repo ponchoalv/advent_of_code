@@ -1,20 +1,20 @@
 enum Direction {
-    Up,
-    Down,
-    Right,
-    Left,
+    Up { is_first: bool, pair: (i32, i32) },
+    Down { pair: (i32, i32) },
+    Right { pair: (i32, i32) },
+    Left { pair: (i32, i32) },
 }
 
-fn get_new_direction(direction: &Direction, change_dir: bool) -> Direction {
+fn get_new_direction(direction: Direction, change_dir: bool) -> Direction {
     match (direction, change_dir) {
-        (Direction::Up, true) => Direction::Left,
-        (Direction::Down, true) => Direction::Right,
-        (Direction::Left, true) => Direction::Down,
-        (Direction::Right, true) => Direction::Up,
-        (Direction::Up, false) => Direction::Up,
-        (Direction::Down, false) => Direction::Down,
-        (Direction::Left, false) => Direction::Left,
-        (Direction::Right, false) => Direction::Right,
+        (Direction::Up { pair, .. }, true) => Direction::Left { pair },
+        (Direction::Down { pair }, true) => Direction::Right { pair },
+        (Direction::Left { pair }, true) => Direction::Down { pair },
+        (Direction::Right { pair }, true) => Direction::Up { is_first: true, pair },
+        (Direction::Up { pair, .. }, false) => Direction::Up { is_first: false, pair },
+        (Direction::Down { pair }, false) => Direction::Down { pair },
+        (Direction::Left { pair }, false) => Direction::Left { pair },
+        (Direction::Right { pair }, false) => Direction::Right { pair },
     }
 }
 
@@ -22,48 +22,52 @@ fn get_level_for_value(number: i32) -> i32 {
     (((number as f32).sqrt() + 1.0) / 2.0).ceil() as i32 - 1
 }
 
-fn get_spiral_iter(max: i32) -> impl Iterator<Item=(i32,i32)> {
-    let mut direction = Direction::Up;
-    let mut actual_pair = (0, 0);
-    let mut is_first = true;
+fn get_spiral_iter(max: i32) -> impl Iterator<Item=(i32, i32)> {
+    let mut direction = Direction::Up { is_first: true, pair: (0, 0) };
 
     (2..=max).map(move |x| {
         let level = get_level_for_value(x) * 2;
 
         match direction {
-            Direction::Up => {
-                if is_first {
-                    actual_pair = (actual_pair.0 + 1, actual_pair.1);
-                    is_first = false;
-                } else {
-                    actual_pair = (actual_pair.0, actual_pair.1 + 1);
-                }
-                direction = get_new_direction(&direction, x % level == 1);
-            },
-            Direction::Down => {
-                actual_pair = (actual_pair.0, actual_pair.1 - 1);
-                direction = get_new_direction(&direction, x % level == 1);
-            },
-            Direction::Left => {
-                actual_pair = (actual_pair.0 - 1, actual_pair.1);
-                direction = get_new_direction(&direction, x % level == 1);
-            },
-            Direction::Right => {
-                actual_pair = (actual_pair.0 + 1, actual_pair.1);
-                let has_change = x % level == 1;
-                direction = get_new_direction(&direction, has_change);
-                is_first = has_change;
-            },
+            Direction::Up { is_first: true, pair } => {
+                let new_pair = (pair.0 + 1, pair.1);
+                let dir = Direction::Up { is_first: true, pair: new_pair };
+                direction = get_new_direction(dir, x % level == 1);
+                new_pair
+            }
+            Direction::Up { is_first: false, pair } => {
+                let new_pair = (pair.0, pair.1 + 1);
+                let dir = Direction::Up { is_first: false, pair: new_pair };
+                direction = get_new_direction(dir, x % level == 1);
+                new_pair
+            }
+            Direction::Down { pair } => {
+                let new_pair = (pair.0, pair.1 - 1);
+                direction = get_new_direction(Direction::Down { pair: new_pair },
+                                              x % level == 1);
+                new_pair
+            }
+            Direction::Left { pair } => {
+                let new_pair = (pair.0 - 1, pair.1);
+                direction = get_new_direction(Direction::Left { pair: new_pair },
+                                              x % level == 1);
+                new_pair
+            }
+            Direction::Right { pair } => {
+                let new_pair = (pair.0 + 1, pair.1);
+                direction = get_new_direction(Direction::Right { pair: new_pair },
+                                              x % level == 1);
+                new_pair
+            }
         }
-        actual_pair
     })
 }
 
-pub fn get_distance_for_number(number: i32) -> i32{
+pub fn get_distance_for_number(number: i32) -> i32 {
     if number == 1 {
         0
     } else {
-        get_spiral_iter(number).last().map(|(a,b)| {
+        get_spiral_iter(number).last().map(|(a, b)| {
             a.abs() + b.abs()
         }).unwrap()
     }
@@ -86,7 +90,7 @@ pub fn day_3_1_2017(num: i32) -> i32 {
 
 
 #[test]
-fn test_distance(){
+fn test_distance() {
     let input = 1;
     let distance = get_distance_for_number(input);
     assert_eq!(0, distance);
