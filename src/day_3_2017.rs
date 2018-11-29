@@ -65,8 +65,8 @@ impl Iterator for SpiralStruct {
         let level = get_level_for_value(count) * 2;
         let change_direction = count % level == 1;
 
-        match (&self.direction, change_direction)  {
-            (DirectionIter::Up(true), _) |  (_, true) => {
+        match (&self.direction, change_direction) {
+            (DirectionIter::Up(true), _) | (_, true) => {
                 self.update_position();
                 self.update_direction();
             }
@@ -78,12 +78,9 @@ impl Iterator for SpiralStruct {
 }
 
 pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
-    let spiral_struct = SpiralStruct::new((0, 0),
-                                          DirectionIter::Up(true));
-
-    let value = spiral_struct.take((number - 1) as usize).last().unwrap();
-
-    (value.0.abs() + value.1.abs())
+    let number_coordinates = SpiralStruct::new((0, 0), DirectionIter::Up(true))
+        .take((number - 1) as usize).last().unwrap();
+    (number_coordinates.0.abs() + number_coordinates.1.abs())
 }
 
 fn get_new_direction(direction: Direction, change_dir: bool) -> Direction {
@@ -169,9 +166,9 @@ pub fn day_3_1_2017(num: i32) -> i32 {
 
 #[test]
 fn test_spiral_struct() {
-//    let input = 1;
-//    let distance = get_distance_for_number(input);
-//    assert_eq!(0, distance);
+    let input = 1;
+    let distance = get_distance_for_number(input);
+    assert_eq!(0, distance);
 
     let input = 2;
     let distance = get_distance_with_spiral_struct(input);
@@ -192,6 +189,10 @@ fn test_spiral_struct() {
     let input = 361527;
     let distance = get_distance_with_spiral_struct(input);
     assert_eq!(326, distance);
+
+    let input = 361_527_234;
+    let distance = get_distance_with_spiral_struct(input);
+    assert_eq!(14051, distance);
 }
 
 
@@ -220,6 +221,10 @@ fn test_distance() {
     let input = 361527;
     let distance = get_distance_for_number(input);
     assert_eq!(326, distance);
+
+    let input = 361_527_234;
+    let distance = get_distance_for_number(input);
+    assert_eq!(14051, distance);
 }
 
 #[test]
@@ -247,4 +252,8 @@ fn probando_day_3_1_2017() {
     let input = 361527;
     let distance = day_3_1_2017(input);
     assert_eq!(326, distance);
+
+    let input = 361_527_234;
+    let distance = day_3_1_2017(input);
+    assert_eq!(14051, distance);
 }
