@@ -1,10 +1,4 @@
-enum Direction {
-    Up { is_first: bool, pair: (i32, i32) },
-    Down { pair: (i32, i32) },
-    Right { pair: (i32, i32) },
-    Left { pair: (i32, i32) },
-}
-
+// solución utilizando una struct e implementando el Trait Iterator.
 enum DirectionIter {
     Up(bool),
     Down,
@@ -48,6 +42,7 @@ impl SpiralStruct {
     }
 }
 
+// se usa en todas las soluciones
 fn get_level_for_value(number: i32) -> i32 {
     if number == 1 {
         1
@@ -81,6 +76,15 @@ pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
     let number_coordinates = SpiralStruct::new((0, 0), DirectionIter::Up(true))
         .take((number - 1) as usize).last().unwrap();
     (number_coordinates.0.abs() + number_coordinates.1.abs())
+}
+
+
+// solución con enfoque funcional. una función que devuelve un Iterator (impl Iterator<Item=T>)
+enum Direction {
+    Up { is_first: bool, pair: (i32, i32) },
+    Down { pair: (i32, i32) },
+    Right { pair: (i32, i32) },
+    Left { pair: (i32, i32) },
 }
 
 fn get_new_direction(direction: Direction, change_dir: bool) -> Direction {
@@ -148,6 +152,8 @@ pub fn get_distance_for_number(number: i32) -> i32 {
     }
 }
 
+
+// Solución utilizando unicamente funciones matematicas:
 fn get_number_position_on_level(number: i32, level: i32) -> i32 {
     ((number - (2 * level - 1).pow(2)) % (2 * level))
 }
