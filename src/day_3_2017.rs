@@ -6,16 +6,16 @@ enum DirectionIter {
     Left,
 }
 
-struct SpiralStruct {
-    pair: (i32, i32),
+struct SpiralStruct<T> {
+    data: T,
     direction: DirectionIter,
     count: i32,
 }
 
-impl SpiralStruct {
-    fn new(pair: (i32, i32), initial_direction: DirectionIter) -> SpiralStruct {
+impl SpiralStruct<(i32, i32)> {
+    fn new(pair: (i32, i32), initial_direction: DirectionIter) -> SpiralStruct<(i32, i32)> {
         SpiralStruct {
-            pair,
+            data: pair,
             direction: initial_direction,
             count: 2,
         }
@@ -32,12 +32,12 @@ impl SpiralStruct {
     }
 
     fn update_position(&mut self) {
-        self.pair = match &self.direction {
-            DirectionIter::Up(true) => (self.pair.0 + 1, self.pair.1),
-            DirectionIter::Up(false) => (self.pair.0, self.pair.1 + 1),
-            DirectionIter::Down => (self.pair.0, self.pair.1 - 1),
-            DirectionIter::Left => (self.pair.0 - 1, self.pair.1),
-            DirectionIter::Right => (self.pair.0 + 1, self.pair.1),
+        self.data = match &self.direction {
+            DirectionIter::Up(true) => (self.data.0 + 1, self.data.1),
+            DirectionIter::Up(false) => (self.data.0, self.data.1 + 1),
+            DirectionIter::Down => (self.data.0, self.data.1 - 1),
+            DirectionIter::Left => (self.data.0 - 1, self.data.1),
+            DirectionIter::Right => (self.data.0 + 1, self.data.1),
         }
     }
 }
@@ -51,7 +51,7 @@ fn get_level_for_value(number: i32) -> i32 {
     }
 }
 
-impl Iterator for SpiralStruct {
+impl Iterator for SpiralStruct<(i32, i32)> {
     type Item = (i32, i32);
 
     fn next(&mut self) -> Option<<Self as Iterator>::Item> {
@@ -68,14 +68,15 @@ impl Iterator for SpiralStruct {
             (_, false) => self.update_position(),
         }
 
-        Some(self.pair)
+        Some(self.data)
     }
 }
 
 pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
-    let number_coordinates = SpiralStruct::new((0, 0), DirectionIter::Up(true))
-        .take((number - 1) as usize).last().unwrap();
-    (number_coordinates.0.abs() + number_coordinates.1.abs())
+    SpiralStruct::new((0, 0), DirectionIter::Up(true))
+        .take((number - 1) as usize).last().map(|(a, b)| {
+        a.abs() + b.abs()
+    }).unwrap()
 }
 
 
