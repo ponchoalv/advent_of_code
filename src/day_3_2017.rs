@@ -5,7 +5,7 @@ enum Direction {
     Left,
 }
 
-fn change_direction(direction: &Direction, change_dir: bool) -> Direction {
+fn get_new_direction(direction: &Direction, change_dir: bool) -> Direction {
     match (direction, change_dir) {
         (Direction::Up, true) => Direction::Left,
         (Direction::Down, true) => Direction::Right,
@@ -24,7 +24,7 @@ fn get_level_for_value(number: i32) -> i32 {
 
 fn get_spiral_iter(max: i32) -> impl Iterator<Item=(i32,i32)> {
     let mut direction = Direction::Up;
-    let mut last_pair = (0, 0);
+    let mut actual_pair = (0, 0);
     let mut is_first = true;
 
     (2..=max).map(move |x| {
@@ -33,29 +33,29 @@ fn get_spiral_iter(max: i32) -> impl Iterator<Item=(i32,i32)> {
         match direction {
             Direction::Up => {
                 if is_first {
-                    last_pair = (last_pair.0 + 1, last_pair.1);
+                    actual_pair = (actual_pair.0 + 1, actual_pair.1);
                     is_first = false;
                 } else {
-                    last_pair = (last_pair.0, last_pair.1 + 1);
+                    actual_pair = (actual_pair.0, actual_pair.1 + 1);
                 }
-                direction = change_direction(&direction, x % level == 1);
+                direction = get_new_direction(&direction, x % level == 1);
             },
             Direction::Down => {
-                last_pair = (last_pair.0, last_pair.1 - 1);
-                direction = change_direction(&direction, x % level == 1);
+                actual_pair = (actual_pair.0, actual_pair.1 - 1);
+                direction = get_new_direction(&direction, x % level == 1);
             },
             Direction::Left => {
-                last_pair = (last_pair.0 - 1, last_pair.1);
-                direction = change_direction(&direction, x % level == 1);
+                actual_pair = (actual_pair.0 - 1, actual_pair.1);
+                direction = get_new_direction(&direction, x % level == 1);
             },
             Direction::Right => {
-                last_pair = (last_pair.0 + 1, last_pair.1);
+                actual_pair = (actual_pair.0 + 1, actual_pair.1);
                 let has_change = x % level == 1;
-                direction = change_direction(&direction, has_change);
+                direction = get_new_direction(&direction, has_change);
                 is_first = has_change;
             },
         }
-        last_pair
+        actual_pair
     })
 }
 
