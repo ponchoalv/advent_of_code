@@ -1,4 +1,4 @@
-#![feature(uniform_paths)]
+#![feature(uniform_paths, specialization)]
 mod day_1_2017;
 mod day_2_2017;
 mod day_3_2017;

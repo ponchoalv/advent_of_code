@@ -12,10 +12,16 @@ struct SpiralStruct<T> {
     count: i32,
 }
 
-impl SpiralStruct<(i32, i32)> {
-    fn new(pair: (i32, i32), initial_direction: DirectionIter) -> SpiralStruct<(i32, i32)> {
+pub trait UpdateData {
+    fn update_data(&mut self) {
+        unimplemented!()
+    }
+}
+
+impl<T> SpiralStruct<T> {
+    fn new(data: T, initial_direction: DirectionIter) -> SpiralStruct<T> {
         SpiralStruct {
-            data: pair,
+            data,
             direction: initial_direction,
             count: 2,
         }
@@ -31,7 +37,13 @@ impl SpiralStruct<(i32, i32)> {
         }
     }
 
-    fn update_position(&mut self) {
+}
+
+impl<T> UpdateData for SpiralStruct<T> {}
+
+// implementación para generar un iterador de coodenadas en el plano
+impl UpdateData for SpiralStruct<(i32, i32)> {
+    fn update_data(&mut self) {
         self.data = match &self.direction {
             DirectionIter::Up(true) => (self.data.0 + 1, self.data.1),
             DirectionIter::Up(false) => (self.data.0, self.data.1 + 1),
@@ -42,6 +54,7 @@ impl SpiralStruct<(i32, i32)> {
     }
 }
 
+
 // se usa en todas las soluciones
 fn get_level_for_value(number: i32) -> i32 {
     if number == 1 {
@@ -51,8 +64,8 @@ fn get_level_for_value(number: i32) -> i32 {
     }
 }
 
-impl Iterator for SpiralStruct<(i32, i32)> {
-    type Item = (i32, i32);
+impl<T> Iterator for SpiralStruct<T> where T: Copy {
+    type Item = T;
 
     fn next(&mut self) -> Option<<Self as Iterator>::Item> {
         let count = self.count;
@@ -62,10 +75,10 @@ impl Iterator for SpiralStruct<(i32, i32)> {
 
         match (&self.direction, change_direction) {
             (DirectionIter::Up(true), _) | (_, true) => {
-                self.update_position();
+                self.update_data();
                 self.update_direction();
             }
-            (_, false) => self.update_position(),
+            (_, false) => self.update_data(),
         }
 
         Some(self.data)
@@ -73,10 +86,11 @@ impl Iterator for SpiralStruct<(i32, i32)> {
 }
 
 pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
-    SpiralStruct::new((0, 0), DirectionIter::Up(true))
-        .take((number - 1) as usize).last().map(|(a, b)| {
-        a.abs() + b.abs()
-    }).unwrap()
+    let spiral_struct = SpiralStruct::new((0, 0), DirectionIter::Up(true));
+
+    spiral_struct.take((number - 1) as usize).last().map(|(a, b)| {
+        (a as i32).abs() + (b as i32).abs()
+    }).unwrap_or(0)
 }
 
 
@@ -174,7 +188,7 @@ pub fn day_3_1_2017(num: i32) -> i32 {
 #[test]
 fn test_spiral_struct() {
     let input = 1;
-    let distance = get_distance_for_number(input);
+    let distance = get_distance_with_spiral_struct(input);
     assert_eq!(0, distance);
 
     let input = 2;
