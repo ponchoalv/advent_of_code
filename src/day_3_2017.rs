@@ -54,6 +54,17 @@ impl UpdateData for SpiralStruct<(i32, i32)> {
     }
 }
 
+impl UpdateData for SpiralStruct<i32> {
+    fn update_data(&mut self) {
+        self.data = match &self.direction {
+            DirectionIter::Up(true) => self.data + self.data * self.data,
+            DirectionIter::Up(false) => self.data - self.data * self.data,
+            DirectionIter::Down => (self.data - 1) * self.data,
+            DirectionIter::Left => (self.data + 1) * self.data,
+            DirectionIter::Right => ((self.data * 2) as f32).sqrt().ceil() as i32 * self.data,
+        }
+    }
+}
 
 // se usa en todas las soluciones
 fn get_level_for_value(number: i32) -> i32 {
@@ -187,6 +198,11 @@ pub fn day_3_1_2017(num: i32) -> i32 {
 
 #[test]
 fn test_spiral_struct() {
+
+    let data = SpiralStruct::new(0,DirectionIter::Up(true)).take(30).collect::<Vec<i32>>();
+
+    println!("la data es {:?}",data);
+
     let input = 1;
     let distance = get_distance_with_spiral_struct(input);
     assert_eq!(0, distance);
@@ -207,13 +223,13 @@ fn test_spiral_struct() {
     let distance = get_distance_with_spiral_struct(input);
     assert_eq!(31, distance);
 
-    let input = 361527;
+    let input = 361_527;
     let distance = get_distance_with_spiral_struct(input);
     assert_eq!(326, distance);
 
-    let input = 361_527_234;
-    let distance = get_distance_with_spiral_struct(input);
-    assert_eq!(14051, distance);
+//    let input = 361_527_234;
+//    let distance = get_distance_with_spiral_struct(input);
+//    assert_eq!(14051, distance);
 }
 
 
