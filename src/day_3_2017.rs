@@ -1,3 +1,4 @@
+
 // solución utilizando una struct e implementando el Trait Iterator.
 enum DirectionIter {
     Up(bool),
@@ -54,14 +55,15 @@ impl UpdateData for SpiralStruct<(i32, i32)> {
     }
 }
 
+// implementar un iterador que suma de forma diferente en cada movimiento.
 impl UpdateData for SpiralStruct<i32> {
     fn update_data(&mut self) {
         self.data = match &self.direction {
-            DirectionIter::Up(true) => self.data + self.data * self.data,
-            DirectionIter::Up(false) => self.data - self.data * self.data,
-            DirectionIter::Down => (self.data - 1) * self.data,
-            DirectionIter::Left => (self.data + 1) * self.data,
-            DirectionIter::Right => ((self.data * 2) as f32).sqrt().ceil() as i32 * self.data,
+            DirectionIter::Up(true) => self.data + self.count * 2,
+            DirectionIter::Up(false) => self.data - self.count * 2,
+            DirectionIter::Down => (self.data - 1) + self.count * 21,
+            DirectionIter::Left => (self.data + 1) + self.count * 13,
+            DirectionIter::Right => self.data * 2 + self.count,
         }
     }
 }
