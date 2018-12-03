@@ -185,7 +185,7 @@ impl SpiralWithMemory {
     }
 
     fn get_sum_of_adyacents(&self, pair: (i32, i32)) -> i32 {
-        let pair = pair;
+
         let x = pair.0;
         let y = pair.1;
 
@@ -200,7 +200,14 @@ impl SpiralWithMemory {
         let pair_8 = &(x + 1, y - 1);
 
         self.calculated_data.iter().filter(|(calc_pair, _)| {
-            (calc_pair == pair_1 || calc_pair == pair_2 || calc_pair == pair_3 || calc_pair == pair_4 || calc_pair == pair_5 || calc_pair == pair_6 || calc_pair == pair_7 || calc_pair == pair_8)
+            (calc_pair == pair_1 ||
+                calc_pair == pair_2 ||
+                calc_pair == pair_3 ||
+                calc_pair == pair_4 ||
+                calc_pair == pair_5 ||
+                calc_pair == pair_6 ||
+                calc_pair == pair_7 ||
+                calc_pair == pair_8)
         }).map(|(_, value)| { value }).sum::<i32>()
     }
 }
@@ -225,10 +232,6 @@ pub fn get_greater_than(input: i32) -> i32 {
 
 #[test]
 fn test_memory_spiral() {
-    let spirtal_with_memory = SpiralWithMemory::new();
-    let vector = spirtal_with_memory.take(80).skip(1).collect::<Vec<i32>>();
-    println!("valores vector {:?}", vector);
-
     let input = 1;
     let greater = get_greater_than(input);
     assert_eq!(2, greater);
@@ -252,7 +255,6 @@ fn test_memory_spiral() {
     let input = 361_527;
     let greater = get_greater_than(input);
     assert_eq!(363010, greater)
-
 }
 
 
