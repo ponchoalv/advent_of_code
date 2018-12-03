@@ -5,7 +5,7 @@ mod day_3_2017;
 
 use day_1_2017::day_1_2017;
 use day_2_2017::{day_2_2017,day_2_2_2017};
-use day_3_2017::{day_3_1_2017,get_distance_for_number,get_distance_with_spiral_struct};
+use day_3_2017::{day_3_1_2017,get_distance_for_number,get_distance_with_spiral_struct,get_greater_than};
 
 
 fn main() {
@@ -44,5 +44,7 @@ fn main() {
     println!("    * Day 3 - Part 1 (with spiral iter) ==> {}", get_distance_for_number(361_527));
 
     println!("    * Day 3 - Part 1 (with spiral struct iter impl) ==> {}", get_distance_with_spiral_struct(361_527));
+
+    println!("    * Day 3 - Part 2 ==> {}", get_greater_than(361_527));
 
 }

@@ -1,4 +1,5 @@
 // solución utilizando una struct e implementando el Trait Iterator.
+#[derive(Copy, Clone)]
 enum Direction {
     Up(bool),
     Down,
@@ -6,12 +7,17 @@ enum Direction {
     Left,
 }
 
+#[derive(Copy, Clone)]
 struct SpiralStruct {
     data: (i32, i32),
     direction: Direction,
     count: i32,
 }
 
+trait SpiralGenerator: Iterator {
+    fn update_direction(&mut self);
+    fn update_data(&mut self);
+}
 
 impl SpiralStruct {
     fn new(data: (i32, i32), initial_direction: Direction) -> SpiralStruct {
@@ -21,7 +27,9 @@ impl SpiralStruct {
             count: 1,
         }
     }
+}
 
+impl SpiralGenerator for SpiralStruct {
     fn update_direction(&mut self) {
         self.direction = match &self.direction {
             Direction::Up(true) => Direction::Up(false),
@@ -43,16 +51,6 @@ impl SpiralStruct {
     }
 }
 
-
-// se usa en todas las soluciones
-fn get_level_for_value(number: i32) -> i32 {
-    if number == 1 {
-        1
-    } else {
-        (((number as f32).sqrt() + 1.0) / 2.0).ceil() as i32 - 1
-    }
-}
-
 impl Iterator for SpiralStruct {
     type Item = (i32, i32);
 
@@ -63,8 +61,8 @@ impl Iterator for SpiralStruct {
         let change_direction = count % level == 1;
 
         match (&self.direction, change_direction, count) {
-            (_,_,1) => (),
-            (Direction::Up(true), _,_) | (_, true,_) => {
+            (_, _, 1) => (),
+            (Direction::Up(true), _, _) | (_, true, _) => {
                 self.update_data();
                 self.update_direction();
             }
@@ -73,6 +71,16 @@ impl Iterator for SpiralStruct {
         Some(self.data)
     }
 }
+
+// se usa en todas las soluciones
+fn get_level_for_value(number: i32) -> i32 {
+    if number == 1 {
+        1
+    } else {
+        (((number as f32).sqrt() + 1.0) / 2.0).ceil() as i32 - 1
+    }
+}
+
 
 pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
     let spiral_struct = SpiralStruct::new((0, 0), Direction::Up(true));
@@ -84,7 +92,7 @@ pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
 
 
 // solución con enfoque funcional. una función que devuelve un Iterator (impl Iterator<Item=T>)
-fn update_direction(direction: &Direction) -> Direction {
+fn update_direction(direction: Direction) -> Direction {
     match direction {
         Direction::Up(true) => Direction::Up(false),
         Direction::Up(false) => Direction::Left,
@@ -94,7 +102,7 @@ fn update_direction(direction: &Direction) -> Direction {
     }
 }
 
-fn update_pair(direction: &Direction, pair: (i32, i32)) -> (i32, i32) {
+fn update_pair(direction: Direction, pair: (i32, i32)) -> (i32, i32) {
     match direction {
         Direction::Up(true) => (pair.0 + 1, pair.1),
         Direction::Up(false) => (pair.0, pair.1 + 1),
@@ -118,12 +126,12 @@ fn get_spiral_iter() -> impl Iterator<Item=(i32, i32)> {
         match (&direction, direction_change, x) {
             (_, _, 1) => pair,
             (Direction::Up(true), _, _) | (_, true, _) => {
-                pair = update_pair(&direction, pair);
-                direction = update_direction(&direction);
+                pair = update_pair(direction, pair);
+                direction = update_direction(direction);
                 pair
             }
             (_, false, _) => {
-                pair = update_pair(&direction, pair);
+                pair = update_pair(direction, pair);
                 pair
             }
         }
@@ -155,9 +163,98 @@ pub fn day_3_1_2017(num: i32) -> i32 {
 
 // Part 2
 
-struct {
+struct SpiralWithMemory {
+    data: i32,
+    count: i32,
+    calculated_data: Vec<((i32, i32), i32)>,
+    spiral_genrator: SpiralStruct,
+}
+
+impl SpiralWithMemory {
+    fn new() -> SpiralWithMemory {
+        SpiralWithMemory {
+            data: 0,
+            count: 1,
+            calculated_data: {
+                let mut calc_vec = Vec::with_capacity(100);
+                calc_vec.push(((0, 0), 1));
+                calc_vec
+            },
+            spiral_genrator: SpiralStruct::new((0, 0), Direction::Up(true)),
+        }
+    }
+
+    fn get_sum_of_adyacents(&self, pair: (i32, i32)) -> i32 {
+        let pair = pair;
+        let x = pair.0;
+        let y = pair.1;
+
+
+        let pair_1 = &(x + 1, y);
+        let pair_2 = &(x + 1, y + 1);
+        let pair_3 = &(x, y + 1);
+        let pair_4 = &(x - 1, y + 1);
+        let pair_5 = &(x - 1, y);
+        let pair_6 = &(x - 1, y - 1);
+        let pair_7 = &(x, y - 1);
+        let pair_8 = &(x + 1, y - 1);
+
+        self.calculated_data.iter().filter(|(calc_pair, _)| {
+            (calc_pair == pair_1 || calc_pair == pair_2 || calc_pair == pair_3 || calc_pair == pair_4 || calc_pair == pair_5 || calc_pair == pair_6 || calc_pair == pair_7 || calc_pair == pair_8)
+        }).map(|(_, value)| { value }).sum::<i32>()
+    }
+}
+
+impl Iterator for SpiralWithMemory {
+    type Item = i32;
+
+    fn next(&mut self) -> Option<<Self as Iterator>::Item> {
+        let count = self.count;
+        self.count += 1;
+        let pair = self.spiral_genrator.take(count as usize).last().unwrap();
+        self.data = self.get_sum_of_adyacents(pair);
+        self.calculated_data.push((pair, self.data));
+
+        Some(self.data)
+    }
+}
+
+pub fn get_greater_than(input: i32) -> i32 {
+    SpiralWithMemory::new().filter(move |&x| {x > input}).take(1).last().unwrap()
+}
+
+#[test]
+fn test_memory_spiral() {
+    let spirtal_with_memory = SpiralWithMemory::new();
+    let vector = spirtal_with_memory.take(80).skip(1).collect::<Vec<i32>>();
+    println!("valores vector {:?}", vector);
+
+    let input = 1;
+    let greater = get_greater_than(input);
+    assert_eq!(2, greater);
+
+    let input = 2;
+    let greater = get_greater_than(input);
+    assert_eq!(4, greater);
+
+    let input = 3;
+    let greater = get_greater_than(input);
+    assert_eq!(4, greater);
+
+    let input = 4;
+    let greater = get_greater_than(input);
+    assert_eq!(5, greater);
+
+    let input = 22;
+    let greater = get_greater_than(input);
+    assert_eq!(23, greater);
+
+    let input = 361_527;
+    let greater = get_greater_than(input);
+    assert_eq!(363010, greater)
 
 }
+
 
 #[test]
 fn test_spiral_struct() {
@@ -186,8 +283,8 @@ fn test_spiral_struct() {
     assert_eq!(326, distance);
 
     let input = 361_527_234;
-   let distance = get_distance_with_spiral_struct(input);
-   assert_eq!(14051, distance);
+    let distance = get_distance_with_spiral_struct(input);
+    assert_eq!(14051, distance);
 }
 
 
