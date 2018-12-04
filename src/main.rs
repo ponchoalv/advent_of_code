@@ -7,7 +7,7 @@ mod day_4_2017;
 use day_1_2017::day_1_2017;
 use day_2_2017::{day_2_2017,day_2_2_2017};
 use day_3_2017::{day_3_1_2017,get_distance_for_number,get_distance_with_spiral_struct,get_greater_than};
-use day_4_2017::{day_4_1_2017};
+use day_4_2017::{day_4_1_2017, day_4_2_2017};
 
 
 
@@ -565,5 +565,7 @@ juo pmiyoh xxk myphio ogfyf dovlmwm moevao qqxidn
 ";
 
     println!("    * Day 4 - Part 1 ==> {}", day_4_1_2017(input));
+
+    println!("    * Day 4 - Part 2 ==> {}", day_4_2_2017(input));
 
 }
