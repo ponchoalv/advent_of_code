@@ -42,8 +42,7 @@ fn is_valid_passphrase_part_2(passphrase: &str) -> bool {
     if is_valid_passphrase(passphrase) {
         let words = passphrase.split_whitespace().collect::<HashSet<&str>>();
         let freqs = words.iter().map(|word| {
-            let frec = get_char_frequencies(word);
-            frec
+             get_char_frequencies(word)
         }).collect::<Vec<HashSet<(char,usize)>>>();
         check_frequencies(freqs)
     } else {

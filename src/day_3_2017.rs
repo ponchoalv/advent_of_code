@@ -226,34 +226,34 @@ impl Iterator for SpiralWithMemory {
     }
 }
 
-pub fn get_greater_than(input: i32) -> i32 {
+pub fn day_3_2_2017(input: i32) -> i32 {
     SpiralWithMemory::new().filter(move |&x| {x > input}).take(1).last().unwrap()
 }
 
 #[test]
 fn test_memory_spiral() {
     let input = 1;
-    let greater = get_greater_than(input);
+    let greater = day_3_2_2017(input);
     assert_eq!(2, greater);
 
     let input = 2;
-    let greater = get_greater_than(input);
+    let greater = day_3_2_2017(input);
     assert_eq!(4, greater);
 
     let input = 3;
-    let greater = get_greater_than(input);
+    let greater = day_3_2_2017(input);
     assert_eq!(4, greater);
 
     let input = 4;
-    let greater = get_greater_than(input);
+    let greater = day_3_2_2017(input);
     assert_eq!(5, greater);
 
     let input = 22;
-    let greater = get_greater_than(input);
+    let greater = day_3_2_2017(input);
     assert_eq!(23, greater);
 
     let input = 361_527;
-    let greater = get_greater_than(input);
+    let greater = day_3_2_2017(input);
     assert_eq!(363010, greater)
 }
 
