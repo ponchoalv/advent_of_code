@@ -6,7 +6,6 @@ fn get_vector_from_input(input: &str) -> Vec<i32> {
     }).collect::<Vec<i32>>()
 }
 
-
 enum InstructionType {
     Normal,
     Strange,
@@ -33,15 +32,16 @@ impl InstructionIterator {
         let new_position = self.instruction_set[self.position] + self.position as i32;
         let offset = self.instruction_set[self.position];
 
-        let new_number = match &self.instruction_set_type {
-            InstructionType::Normal => offset + 1,
-            InstructionType::Strange =>
-                if offset >= 3 {
-                    offset - 1
-                } else {
-                    offset + 1
-                }
-        };
+        let new_number =
+            match &self.instruction_set_type {
+                InstructionType::Normal => offset + 1,
+                InstructionType::Strange =>
+                    if offset >= 3 {
+                        offset - 1
+                    } else {
+                        offset + 1
+                    }
+            };
 
         self.instruction_set[self.position] = new_number;
         self.position = new_position as usize;
@@ -64,11 +64,13 @@ impl Iterator for InstructionIterator {
 
 impl FusedIterator for InstructionIterator {}
 
-
 pub fn day_5_1_2017(input: &str) -> usize {
     let instruction_set = get_vector_from_input(input);
     let instruction_set_len = instruction_set.len();
-    let instruction_iterator = InstructionIterator::new(instruction_set, instruction_set_len, InstructionType::Normal);
+    let instruction_iterator =
+        InstructionIterator::new(instruction_set,
+                                 instruction_set_len,
+                                 InstructionType::Normal);
 
     instruction_iterator.count()
 }
@@ -76,7 +78,10 @@ pub fn day_5_1_2017(input: &str) -> usize {
 pub fn day_5_2_2017(input: &str) -> usize {
     let instruction_set = get_vector_from_input(input);
     let instruction_set_len = instruction_set.len();
-    let instruction_iterator = InstructionIterator::new(instruction_set, instruction_set_len, InstructionType::Strange);
+    let instruction_iterator =
+        InstructionIterator::new(instruction_set,
+                                 instruction_set_len,
+                                 InstructionType::Strange);
 
     instruction_iterator.count()
 }
@@ -2174,5 +2179,5 @@ fn probando_day_5_2_2017() {
 -979";
 
     let result = day_5_2_2017(input);
-    assert_eq!(24_568_703,result);
+    assert_eq!(24_568_703, result);
 }
