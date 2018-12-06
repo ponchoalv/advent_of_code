@@ -4,6 +4,8 @@ mod day_3_2017;
 mod day_4_2017;
 mod day_5_2017;
 mod day_6_2017;
+mod day_7_2017;
+
 
 use crate::day_1_2017::day_1_2017;
 use crate::day_2_2017::{day_2_2017, day_2_2_2017};
