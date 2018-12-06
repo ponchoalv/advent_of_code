@@ -19,7 +19,9 @@ struct InstructionIterator {
 }
 
 impl InstructionIterator {
-    fn new(instruction_set: Vec<i32>, instruction_set_len: usize, instruction_set_type: InstructionType) -> InstructionIterator {
+    fn new(instruction_set: Vec<i32>,
+           instruction_set_len: usize,
+           instruction_set_type: InstructionType) -> InstructionIterator {
         InstructionIterator {
             instruction_set,
             position: 0,
@@ -1131,7 +1133,7 @@ fn probando_day_5_1_2017() {
 -979";
 
     let result = day_5_1_2017(input);
-    assert_eq!(351282, result);
+    assert_eq!(351_282, result);
 }
 
 #[test]
