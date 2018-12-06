@@ -15,8 +15,7 @@ struct MemoryBlocksIterator {
 
 impl MemoryBlocksIterator {
     fn new(blocks: Vec<usize>) -> MemoryBlocksIterator {
-        let len = blocks.len();
-        let mut blocks_memory: HashSet<Vec<usize>> = HashSet::with_capacity(len * 3);
+        let mut blocks_memory: HashSet<Vec<usize>> = HashSet::new();
         blocks_memory.insert(blocks.clone());
 
         MemoryBlocksIterator {
@@ -53,12 +52,12 @@ impl MemoryBlocksIterator {
 }
 
 impl Iterator for MemoryBlocksIterator {
-    type Item = bool;
+    type Item = Vec<usize>;
 
     fn next(&mut self) -> Option<<Self as Iterator>::Item> {
         self.cycle_blocks();
         if self.blocks_memory.insert(self.current_blocks.clone()) {
-            Some(true)
+            Some(self.current_blocks.clone())
         } else {
             None
         }
@@ -74,10 +73,33 @@ pub fn day_6_1_2017(input: &str) -> usize {
     memory_cycling_iterator.count() + 1
 }
 
+pub fn day_6_2_2017(input: &str) -> usize {
+    let memory_blocks = get_vector_from_input(input);
+    let last_vector = MemoryBlocksIterator::new(memory_blocks).last().unwrap();
+
+    MemoryBlocksIterator::new(last_vector).count() + 1
+}
+
 #[test]
 fn probando_day_6_1_2017() {
-    println!("Starting Count");
     let input = "0 2 7 0";
     let result = day_6_1_2017(input);
-    assert_eq!(5,result);
+    assert_eq!(5, result);
+
+
+    let input = "0	5	10	0	11	14	13	4	11	8	8	7	1	4	12	11";
+    let result = day_6_1_2017(input);
+    assert_eq!(7864, result);
+}
+
+#[test]
+fn probando_day_6_2_2017() {
+    let input = "0 2 7 0";
+    let result = day_6_2_2017(input);
+    assert_eq!(4, result);
+
+
+    let input = "0	5	10	0	11	14	13	4	11	8	8	7	1	4	12	11";
+    let result = day_6_2_2017(input);
+    assert_eq!(1695, result);
 }

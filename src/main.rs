@@ -1,5 +1,3 @@
-#![feature(uniform_paths, specialization)]
-
 mod day_1_2017;
 mod day_2_2017;
 mod day_3_2017;
@@ -7,12 +5,12 @@ mod day_4_2017;
 mod day_5_2017;
 mod day_6_2017;
 
-use day_1_2017::day_1_2017;
-use day_2_2017::{day_2_2017, day_2_2_2017};
-use day_3_2017::{day_3_1_2017, get_distance_for_number, get_distance_with_spiral_struct, day_3_2_2017};
-use day_4_2017::{day_4_1_2017, day_4_2_2017};
-use day_5_2017::{day_5_1_2017, day_5_2_2017};
-
+use crate::day_1_2017::day_1_2017;
+use crate::day_2_2017::{day_2_2017, day_2_2_2017};
+use crate::day_3_2017::{day_3_1_2017, get_distance_for_number, get_distance_with_spiral_struct, day_3_2_2017};
+use crate::day_4_2017::{day_4_1_2017, day_4_2_2017};
+use crate::day_5_2017::{day_5_1_2017, day_5_2_2017};
+use crate::day_6_2017::{day_6_1_2017, day_6_2_2017};
 
 
 fn run_advent_of_code_2017() {
@@ -1608,6 +1606,12 @@ juo pmiyoh xxk myphio ogfyf dovlmwm moevao qqxidn
     println!("    * Day 5 - Part 1 ==> {}", day_5_1_2017(input));
 
     println!("    * Day 5 - Part 2 ==> {}", day_5_2_2017(input));
+
+    let input = "0	5	10	0	11	14	13	4	11	8	8	7	1	4	12	11";
+
+    println!("    * Day 6 - Part 1 ==> {}", day_6_1_2017(input));
+
+    println!("    * Day 6 - Part 2 ==> {}", day_6_2_2017(input));
 }
 
 
