@@ -6,14 +6,15 @@ fn is_valid_passphrase(passphrase: &str) -> bool {
 }
 
 pub fn day_4_1_2017(input: &str) -> usize {
-    input.lines().filter(|passphrase| { is_valid_passphrase(passphrase) }).count()
+    input
+        .lines()
+        .filter(|passphrase| is_valid_passphrase(passphrase))
+        .count()
 }
 
 // Part 2
 fn count_char_on_word(c: char, word: &str) -> (char, usize) {
-    let char_count = word.chars().filter(|&c_word| {
-        c_word == c
-    }).count();
+    let char_count = word.chars().filter(|&c_word| c_word == c).count();
 
     (c, char_count)
 }
@@ -29,21 +30,34 @@ fn get_char_frequencies(word: &str) -> HashSet<(char, usize)> {
     counts
 }
 
-fn check_frequencies(frequencies: Vec<HashSet<(char,usize)>>) -> bool {
+fn check_frequencies(frequencies: Vec<HashSet<(char, usize)>>) -> bool {
     let len = frequencies.len();
-    (1..len).map(|i|{ frequencies.iter().zip(frequencies.iter().cycle().skip(i)).filter_map(|(a,b)|{
-        if a.is_subset(&b) && b.is_subset(&a) {
-            Some(true)
-        } else { None }
-    }).take(1).count()}).sum::<usize>() == 0
+    (1..len)
+        .map(|i| {
+            frequencies
+                .iter()
+                .zip(frequencies.iter().cycle().skip(i))
+                .filter_map(|(a, b)| {
+                    if a.is_subset(&b) && b.is_subset(&a) {
+                        Some(true)
+                    } else {
+                        None
+                    }
+                })
+                .take(1)
+                .count()
+        })
+        .sum::<usize>()
+        == 0
 }
 
 fn is_valid_passphrase_part_2(passphrase: &str) -> bool {
     if is_valid_passphrase(passphrase) {
         let words = passphrase.split_whitespace().collect::<HashSet<&str>>();
-        let freqs = words.iter().map(|word| {
-             get_char_frequencies(word)
-        }).collect::<Vec<HashSet<(char,usize)>>>();
+        let freqs = words
+            .iter()
+            .map(|word| get_char_frequencies(word))
+            .collect::<Vec<HashSet<(char, usize)>>>();
         check_frequencies(freqs)
     } else {
         false
@@ -51,9 +65,11 @@ fn is_valid_passphrase_part_2(passphrase: &str) -> bool {
 }
 
 pub fn day_4_2_2017(input: &str) -> usize {
-    input.lines().filter(|passphrase| { is_valid_passphrase_part_2(passphrase) }).count()
+    input
+        .lines()
+        .filter(|passphrase| is_valid_passphrase_part_2(passphrase))
+        .count()
 }
-
 
 #[test]
 fn probar_day_4_1_2017() {
@@ -68,7 +84,6 @@ fn probar_day_4_1_2017() {
     let input = "tawl yrhoz tawl yrhoz";
     let result = is_valid_passphrase(input);
     assert_eq!(false, result);
-
 
     let input = "aa bb cc dd aaa";
     let result = is_valid_passphrase(input);
@@ -589,7 +604,6 @@ juo pmiyoh xxk myphio ogfyf dovlmwm moevao qqxidn";
     let result = day_4_1_2017(input);
     assert_eq!(466, result);
 }
-
 
 #[test]
 fn probar_day_4_2_2017() {

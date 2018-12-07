@@ -3,9 +3,10 @@ use std::collections::HashSet;
 use std::iter::FusedIterator;
 
 fn get_vector_from_input(input: &str) -> Vec<usize> {
-    input.split_whitespace().map(|value| {
-        value.parse::<usize>().unwrap()
-    }).collect::<Vec<usize>>()
+    input
+        .split_whitespace()
+        .map(|value| value.parse::<usize>().unwrap())
+        .collect::<Vec<usize>>()
 }
 
 struct MemoryBlocksIterator {
@@ -25,13 +26,18 @@ impl MemoryBlocksIterator {
     }
 
     fn get_max(&self) -> (usize, usize) {
-        let (index, &value) = self.current_blocks.iter().enumerate().max_by(|(_x, y), (_z, k)| {
-            if y >= k {
-                Ordering::Greater
-            } else {
-                Ordering::Less
-            }
-        }).unwrap();
+        let (index, &value) = self
+            .current_blocks
+            .iter()
+            .enumerate()
+            .max_by(|(_x, y), (_z, k)| {
+                if y >= k {
+                    Ordering::Greater
+                } else {
+                    Ordering::Less
+                }
+            })
+            .unwrap();
         (index, value)
     }
 
@@ -86,7 +92,6 @@ fn probando_day_6_1_2017() {
     let result = day_6_1_2017(input);
     assert_eq!(5, result);
 
-
     let input = "0	5	10	0	11	14	13	4	11	8	8	7	1	4	12	11";
     let result = day_6_1_2017(input);
     assert_eq!(7864, result);
@@ -97,7 +102,6 @@ fn probando_day_6_2_2017() {
     let input = "0 2 7 0";
     let result = day_6_2_2017(input);
     assert_eq!(4, result);
-
 
     let input = "0	5	10	0	11	14	13	4	11	8	8	7	1	4	12	11";
     let result = day_6_2_2017(input);

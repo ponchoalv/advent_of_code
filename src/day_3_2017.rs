@@ -81,15 +81,15 @@ fn get_level_for_value(number: i32) -> i32 {
     }
 }
 
-
 pub fn get_distance_with_spiral_struct(number: i32) -> i32 {
     let spiral_struct = SpiralStruct::new((0, 0), Direction::Up(true));
 
-    spiral_struct.take(number as usize).last().map(|(a, b)| {
-        (a as i32).abs() + (b as i32).abs()
-    }).unwrap()
+    spiral_struct
+        .take(number as usize)
+        .last()
+        .map(|(a, b)| (a as i32).abs() + (b as i32).abs())
+        .unwrap()
 }
-
 
 // solución con enfoque funcional. una función que devuelve un Iterator (impl Iterator<Item=T>)
 fn update_direction(direction: Direction) -> Direction {
@@ -112,8 +112,7 @@ fn update_pair(direction: Direction, pair: (i32, i32)) -> (i32, i32) {
     }
 }
 
-
-fn get_spiral_iter() -> impl Iterator<Item=(i32, i32)> {
+fn get_spiral_iter() -> impl Iterator<Item = (i32, i32)> {
     // setup initial values
     let mut direction = Direction::Up(true);
     let mut pair = (0, 0);
@@ -139,16 +138,17 @@ fn get_spiral_iter() -> impl Iterator<Item=(i32, i32)> {
 }
 
 pub fn get_distance_for_number(number: i32) -> i32 {
-    get_spiral_iter().take(number as usize).last().map(|(a, b)| {
-        a.abs() + b.abs()
-    }).unwrap()
+    get_spiral_iter()
+        .take(number as usize)
+        .last()
+        .map(|(a, b)| a.abs() + b.abs())
+        .unwrap()
 }
 
 // Solución utilizando unicamente funciones matematicas:
 fn get_number_position_on_level(number: i32, level: i32) -> i32 {
     ((number - (2 * level - 1).pow(2)) % (2 * level))
 }
-
 
 pub fn day_3_1_2017(num: i32) -> i32 {
     if num == 1 {
@@ -159,7 +159,6 @@ pub fn day_3_1_2017(num: i32) -> i32 {
         ((posicion - level).abs() + level)
     }
 }
-
 
 // Part 2
 
@@ -185,10 +184,8 @@ impl SpiralWithMemory {
     }
 
     fn get_sum_of_adyacents(&self, pair: (i32, i32)) -> i32 {
-
         let x = pair.0;
         let y = pair.1;
-
 
         let pair_1 = &(x + 1, y);
         let pair_2 = &(x + 1, y + 1);
@@ -199,16 +196,20 @@ impl SpiralWithMemory {
         let pair_7 = &(x, y - 1);
         let pair_8 = &(x + 1, y - 1);
 
-        self.calculated_data.iter().filter(|(calc_pair, _)| {
-            (calc_pair == pair_1 ||
-                calc_pair == pair_2 ||
-                calc_pair == pair_3 ||
-                calc_pair == pair_4 ||
-                calc_pair == pair_5 ||
-                calc_pair == pair_6 ||
-                calc_pair == pair_7 ||
-                calc_pair == pair_8)
-        }).map(|(_, value)| { value }).sum::<i32>()
+        self.calculated_data
+            .iter()
+            .filter(|(calc_pair, _)| {
+                (calc_pair == pair_1
+                    || calc_pair == pair_2
+                    || calc_pair == pair_3
+                    || calc_pair == pair_4
+                    || calc_pair == pair_5
+                    || calc_pair == pair_6
+                    || calc_pair == pair_7
+                    || calc_pair == pair_8)
+            })
+            .map(|(_, value)| value)
+            .sum::<i32>()
     }
 }
 
@@ -227,7 +228,11 @@ impl Iterator for SpiralWithMemory {
 }
 
 pub fn day_3_2_2017(input: i32) -> i32 {
-    SpiralWithMemory::new().filter(move |&x| {x > input}).take(1).last().unwrap()
+    SpiralWithMemory::new()
+        .filter(move |&x| x > input)
+        .take(1)
+        .last()
+        .unwrap()
 }
 
 #[test]
@@ -256,7 +261,6 @@ fn test_memory_spiral() {
     let greater = day_3_2_2017(input);
     assert_eq!(363010, greater)
 }
-
 
 #[test]
 fn test_spiral_struct() {
@@ -288,7 +292,6 @@ fn test_spiral_struct() {
     let distance = get_distance_with_spiral_struct(input);
     assert_eq!(14051, distance);
 }
-
 
 #[test]
 fn test_distance() {

@@ -1,22 +1,29 @@
 fn get_vector_of_i32(vals: &str) -> Vec<Vec<i32>> {
-    vals.split('\n').map(|row: &str| {
-        row.split('\t').map(|str_num: &str| {
-            str_num.parse::<i32>().unwrap()
-        }).collect::<Vec<i32>>() }).collect::<Vec<Vec<i32>>>()
+    vals.split('\n')
+        .map(|row: &str| {
+            row.split('\t')
+                .map(|str_num: &str| str_num.parse::<i32>().unwrap())
+                .collect::<Vec<i32>>()
+        })
+        .collect::<Vec<Vec<i32>>>()
 }
 
 pub fn day_2_2017(vals: &str) -> i32 {
     let num_values = get_vector_of_i32(vals);
-    let max_values: Vec<&i32> = num_values.iter().map(|row| {
-        row.iter().max().unwrap()
-    }).collect();
-    let min_values: Vec<&i32> = num_values.iter().map(|row| {
-        row.iter().min().unwrap()
-    }).collect();
+    let max_values: Vec<&i32> = num_values
+        .iter()
+        .map(|row| row.iter().max().unwrap())
+        .collect();
+    let min_values: Vec<&i32> = num_values
+        .iter()
+        .map(|row| row.iter().min().unwrap())
+        .collect();
 
-    max_values.iter().zip(min_values.iter()).map(|(&a, &b)| {
-        a - b
-    }).sum::<i32>()
+    max_values
+        .iter()
+        .zip(min_values.iter())
+        .map(|(&a, &b)| a - b)
+        .sum::<i32>()
 }
 
 #[test]
@@ -48,20 +55,29 @@ fn probando_day_2() {
 pub fn day_2_2_2017(vals: &str) -> i32 {
     let num_values = get_vector_of_i32(vals);
 
-    num_values.iter().map(|row| {
-        row.iter().enumerate().skip(1).map(|(i, _num)| {
-            row.iter().cycle().skip(i).take(row.len()).zip(row.iter()).filter_map(|(a,b)| {
-                if a % b == 0 {
-                    Some(a/b)
-                } else { None }
-            }).take(1).sum::<i32>()
-        }).sum::<i32>()
-    }).sum::<i32>()
+    num_values
+        .iter()
+        .map(|row| {
+            row.iter()
+                .enumerate()
+                .skip(1)
+                .map(|(i, _num)| {
+                    row.iter()
+                        .cycle()
+                        .skip(i)
+                        .take(row.len())
+                        .zip(row.iter())
+                        .filter_map(|(a, b)| if a % b == 0 { Some(a / b) } else { None })
+                        .take(1)
+                        .sum::<i32>()
+                })
+                .sum::<i32>()
+        })
+        .sum::<i32>()
 }
 
-
 #[test]
-fn probado_day_2_2_2017(){
+fn probado_day_2_2_2017() {
     let vals = "5\t9\t2\t8\n9\t4\t7\t3\n3\t8\t6\t5";
     let result = day_2_2_2017(vals);
     assert_eq!(9, result);

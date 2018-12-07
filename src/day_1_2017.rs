@@ -1,13 +1,10 @@
 pub fn day_1_2017(vals: &str, cycle_skip: usize) -> u32 {
-    let vals: Vec<u32> = vals.chars().filter_map(|c| { c.to_digit(10) }).collect();
+    let vals: Vec<u32> = vals.chars().filter_map(|c| c.to_digit(10)).collect();
 
     vals.iter()
-        .zip(vals.iter()
-            .cycle()
-            .skip(cycle_skip))
-        .filter_map(|(a, b)| {
-            if a == b { Some(b) } else { None }
-        }).sum()
+        .zip(vals.iter().cycle().skip(cycle_skip))
+        .filter_map(|(a, b)| if a == b { Some(b) } else { None })
+        .sum()
 }
 
 #[test]
