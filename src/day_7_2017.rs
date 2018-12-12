@@ -1,4 +1,5 @@
-use std::cmp::Ordering;
+use std::collections::HashSet;
+use std::iter::FusedIterator;
 
 fn load_input(input: &str) -> Vec<&str> {
     input.lines().collect::<Vec<&str>>()
@@ -32,63 +33,82 @@ fn get_tuple(data: &str) -> (String, usize, Option<Vec<String>>) {
 }
 
 fn get_vec_of_tuples(data: &[&str]) -> Vec<(String, usize, Option<Vec<String>>)> {
-    data.iter()
-        .map(|&elem| {
-            let tupleted = get_tuple(elem);
-            println!("Tupleted {:?}", tupleted);
-            tupleted
+    data.iter().map(|&elem| get_tuple(elem)).collect()
+}
+
+fn get_leafs(
+    data: &Vec<(String, usize, Option<Vec<String>>)>,
+) -> Vec<(String, usize, Option<Vec<String>>)> {
+    data.clone()
+        .into_iter()
+        .filter(|(_, _, vec)| match vec {
+            None => true,
+            _ => false,
         })
-        .collect()
+        .collect::<Vec<(String, usize, Option<Vec<String>>)>>()
 }
 
-fn get_min(data: &[(String, usize, Option<Vec<String>>)]) -> (String, usize, Option<Vec<String>>) {
-    let (name, weight, leafs) = data
-        .iter()
-        .min_by(|(_, y, _), (_, k, _)| {
-            if y < k {
-                Ordering::Less
-            } else if y == k {
-                Ordering::Equal
-            } else {
-                Ordering::Greater
-            }
-        })
-        .unwrap();
-
-    (name.to_owned(), *weight, leafs.to_owned())
+struct TreeIterator {
+    items: Vec<(String, usize, Option<Vec<String>>)>,
+    children: Vec<(String, usize, Option<Vec<String>>)>,
 }
 
-struct TowerIterator {
-    vector_of_vec: Vec<Vec<(String, usize, Option<Vec<String>>)>>,
-    current_vec: Vec<(String, usize, Option<Vec<String>>)>,
-}
+impl TreeIterator {
+    fn new(items: Vec<(String, usize, Option<Vec<String>>)>) -> TreeIterator {
+        let children = get_leafs(&items);
 
-impl TowerIterator {
-    fn new(tower: Vec<(String, usize, Option<Vec<String>>)>) -> TowerIterator {
-        TowerIterator {
-            vector_of_vec: Vec::new(),
-            current_vec: tower,
-        }
+        TreeIterator { items, children }
     }
 
-    fn update_tower(&mut self) {}
+    fn get_predecesor(&mut self) -> Vec<(String, usize, Option<Vec<String>>)> {
+        let children_set = self
+            .children
+            .iter()
+            .map(|(name, _, _)| name)
+            .collect::<HashSet<&String>>();
+
+        self.items
+            .clone()
+            .into_iter()
+            .filter(move |(_, _, some_children)| match some_children {
+                Some(elem_children) => {
+                    let elem_children_set = elem_children.iter().collect::<HashSet<&String>>();
+                    elem_children_set.intersection(&children_set).count() > 0
+                }
+                None => false,
+            })
+            .collect::<Vec<(String, usize, Option<Vec<String>>)>>()
+    }
 }
+
+impl Iterator for TreeIterator {
+    type Item = Vec<(String, usize, Option<Vec<String>>)>;
+
+    fn next(&mut self) -> Option<<Self as Iterator>::Item> {
+        let children_len = self.children.len();
+
+        if children_len <= 1 {
+            None
+        } else {
+            self.children = self.get_predecesor();
+            Some(self.children.clone())
+        }
+    }
+}
+
+impl FusedIterator for TreeIterator {}
 
 pub fn day_7_1_2017(input: &str) -> String {
     let vector = load_input(input);
     let norm_vector = get_vec_of_tuples(&vector);
-    let filtered_nodes = norm_vector
-        .iter()
-        .filter(|&(_, _, vec)| match vec {
-            Some(_) => true,
-            _ => false,
-        })
-        .collect::<Vec<(String, usize, Option<Vec<String>>)>>();
 
-    println!("Norm_Vector {:?}", norm_vector);
-    println!("Filtered  vector {:?}", filtered_nodes);
-
-    get_min(&norm_vector).0
+    let tree_iterator = TreeIterator::new(norm_vector.clone());
+    let root = tree_iterator.last();
+    let root_name = match root {
+        Some(value) => value[0].0.to_owned(),
+        _ => "no_value".to_owned()
+    };
+    root_name
 }
 
 #[test]
@@ -1191,5 +1211,5 @@ qjnela (266) -> andixsk, qfsbvqe
 idfyy (51) -> vxnwq, meuyumr, oyjjdj, iqwspxd, aobgmc
 ";
     let result = day_7_1_2017(input);
-    assert_eq!("rvftpif".to_owned(), result);
+    assert_eq!("rqwgj".to_owned(), result);
 }
