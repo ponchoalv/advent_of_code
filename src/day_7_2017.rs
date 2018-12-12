@@ -106,7 +106,7 @@ pub fn day_7_1_2017(input: &str) -> String {
     let root = tree_iterator.last();
     let root_name = match root {
         Some(value) => value[0].0.to_owned(),
-        _ => "no_value".to_owned()
+        _ => "no_value".to_owned(),
     };
     root_name
 }
