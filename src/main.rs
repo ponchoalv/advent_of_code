@@ -1,5 +1,3 @@
-#![feature(slice_partition_dedup)]
-
 mod day_1_2017;
 mod day_2_2017;
 mod day_3_2017;
@@ -2711,7 +2709,6 @@ idfyy (51) -> vxnwq, meuyumr, oyjjdj, iqwspxd, aobgmc
 ";
 
     println!("    * Day 7 - Part 1 ==> {}", day_7_1_2017(input));
-
 }
 
 fn main() {

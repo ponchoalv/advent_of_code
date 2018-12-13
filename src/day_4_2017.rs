@@ -30,7 +30,7 @@ fn get_char_frequencies(word: &str) -> HashSet<(char, usize)> {
     counts
 }
 
-fn check_frequencies(frequencies: Vec<HashSet<(char, usize)>>) -> bool {
+fn check_frequencies(frequencies: &[HashSet<(char, usize)>]) -> bool {
     let len = frequencies.len();
     (1..len)
         .map(|i| {
@@ -58,7 +58,7 @@ fn is_valid_passphrase_part_2(passphrase: &str) -> bool {
             .iter()
             .map(|word| get_char_frequencies(word))
             .collect::<Vec<HashSet<(char, usize)>>>();
-        check_frequencies(freqs)
+        check_frequencies(&freqs)
     } else {
         false
     }

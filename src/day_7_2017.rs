@@ -37,9 +37,9 @@ fn get_vec_of_tuples(data: &[&str]) -> Vec<(String, usize, Option<Vec<String>>)>
 }
 
 fn get_leafs(
-    data: &Vec<(String, usize, Option<Vec<String>>)>,
+    data: &[(String, usize, Option<Vec<String>>)],
 ) -> Vec<(String, usize, Option<Vec<String>>)> {
-    data.clone()
+    data.to_owned()
         .into_iter()
         .filter(|(_, _, vec)| match vec {
             None => true,
@@ -104,11 +104,68 @@ pub fn day_7_1_2017(input: &str) -> String {
 
     let tree_iterator = TreeIterator::new(norm_vector.clone());
     let root = tree_iterator.last();
-    let root_name = match root {
+    match root {
         Some(value) => value[0].0.to_owned(),
         _ => "no_value".to_owned(),
-    };
-    root_name
+    }
+}
+
+// part 2
+fn get_row_by_name(
+    data: &[(String, usize, Option<Vec<String>>)],
+    name: &str,
+) -> Option<(String, usize, Option<Vec<String>>)> {
+    data.to_owned()
+        .into_iter()
+        .filter(|(row_name, _, _)| row_name.to_owned() == name.to_owned())
+        .last()
+}
+
+fn get_descendants(
+    data: &[(String, usize, Option<Vec<String>>)],
+    name: &str,
+) -> Option<Vec<(String, usize, Option<Vec<String>>)>> {
+    let row = get_row_by_name(data, name);
+    let descendants_names = row
+        .unwrap_or(("no_value".to_owned(), 0, None))
+        .2
+        .unwrap_or(vec!["".to_owned()]);
+
+    descendants_names
+        .to_owned()
+        .into_iter()
+        .map(|row_name| get_row_by_name(data, &row_name))
+        .collect::<Option<Vec<(String, usize, Option<Vec<String>>)>>>()
+}
+
+pub fn day_7_2_2017(input: &str) -> usize {
+    let vector = load_input(input);
+    let norm_vector = get_vec_of_tuples(&vector);
+
+    let tree_iterator = TreeIterator::new(norm_vector.clone());
+    let root = tree_iterator.last().unwrap();
+
+    println!("Root -> {:?}", root);
+
+    let len = root[0].2.clone().unwrap().len();
+    let mut sum_vec: Vec<usize> = Vec::with_capacity(len);
+
+    for elem in root[0].2.clone().unwrap().iter() {
+        let row = get_row_by_name(&norm_vector, elem);
+        println!("Children of root -> {:?}", row);
+        sum_vec.push(row.unwrap().1);
+    }
+
+    let descendants = get_descendants(&norm_vector, &day_7_1_2017(input));
+    println!("vec of sums -> {:?}", sum_vec);
+
+    println!("Descendats -> {:?}", descendants);
+
+    let descensands_2 = get_descendants(&norm_vector, "ugml");
+
+    println!("Descendats 2 -> {:?}", descensands_2);
+
+    sum_vec.iter().sum::<usize>()
 }
 
 #[test]
@@ -1212,4 +1269,25 @@ idfyy (51) -> vxnwq, meuyumr, oyjjdj, iqwspxd, aobgmc
 ";
     let result = day_7_1_2017(input);
     assert_eq!("rqwgj".to_owned(), result);
+}
+
+#[test]
+fn probando_day_7_2_2017() {
+    let input = "pbga (66)
+xhth (57)
+ebii (61)
+havc (66)
+ktlj (57)
+fwft (72) -> ktlj, cntj, xhth
+qoyq (66)
+padx (45) -> pbga, havc, qoyq
+tknk (41) -> ugml, padx, fwft
+jptl (61)
+ugml (68) -> gyxo, ebii, jptl
+gyxo (61)
+cntj (57)";
+
+    day_7_2_2017(input);
+
+    assert_eq!(true, true);
 }
