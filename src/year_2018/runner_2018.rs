@@ -37,4 +37,13 @@ pub fn run_advent_of_code_2018() {
         "* Day 4 - part 2 => {result:?}",
         result = year_2018::day_4_2018::day_4_2_2018()
     );
+
+    println!(
+        "* Day 5 - part 1 => {result:?}",
+        result = year_2018::day_5_2018::day_5_1_2018()
+    );
+    println!(
+        "* Day 5 - part 2 => {result:?}",
+        result = year_2018::day_5_2018::day_5_2_2018()
+    );
 }
